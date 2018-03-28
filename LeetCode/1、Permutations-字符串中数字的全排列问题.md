@@ -125,3 +125,54 @@ public class Solution {
     }
 }
 ```
+
+
+```
+package leetcode;
+
+import java.util.Arrays;
+
+public class QuanPaiLie {
+    public static  void main(String[] args){
+        int [] array = {1,2,3,1};
+        int len = array.length;
+        fullSort(array,0,len-1);
+//        System.out.println(array.length);
+    }
+
+    public static void fullSort(int [] numbers, int start, int end){
+        if (start==end){
+            System.out.println(Arrays.toString(numbers));
+
+        }
+        for (int i = start; i <= end; i++) {
+
+            if (!isSwaped(numbers,start,i)){
+                continue;
+            }
+
+            swap(numbers,i,start);
+            fullSort(numbers,start+1,end);
+            swap(numbers,i,start);//恢复数组，使得下一次进入循环时数组的排列一样
+        }
+    }
+
+    public static void swap(int [] numbers, int i, int j){
+        int temp = numbers[i];
+        numbers[i] = numbers[j];
+        numbers[j] = temp;
+    }
+
+    //是否需要进行交换，有重复的就不进行交换，直接下一次循环
+    public static boolean isSwaped(int [] numbers, int start, int end){
+        for (int k = start; k < end; k++) {
+            if (numbers[k]==numbers[end]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+}
+
+```
