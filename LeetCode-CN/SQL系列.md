@@ -174,3 +174,118 @@ Orders 表：
 select c.Name Customers from Customers c left join Orders o on c.Id = o.CustomerId where o.CustomerId is null
 ```
 
+
+
+### 196. 删除重复的电子邮箱（easy）
+
+### 题目 
+
+编写一个 SQL 查询，来删除 Person 表中所有重复的电子邮箱，重复的邮箱里只保留 Id 最小 的那个。
+
+	+----+------------------+
+	| Id | Email            |
+	+----+------------------+
+	| 1  | john@example.com |
+	| 2  | bob@example.com  |
+	| 3  | john@example.com |
+	+----+------------------+
+
+Id 是这个表的主键。
+例如，在运行你的查询语句之后，上面的 Person 表应返回以下几行:
+	
+	+----+------------------+
+	| Id | Email            |
+	+----+------------------+
+	| 1  | john@example.com |
+	| 2  | bob@example.com  |
+	+----+------------------+
+
+
+### 思路
+
+此题使用内连接让两个表以邮箱关联起来，然后把相同邮箱且Id大的删除掉。
+
+
+### sql
+
+```
+# Write your MySQL query statement below
+ delete p2 from Person p1 join Person p2 on p1.Email = p2.Email where p2.Id > p1.Id
+```
+
+
+### 197. 上升的温度（easy）
+
+### 题目 
+
+
+给定一个 Weather 表，编写一个 SQL 查询，来查找与之前（昨天的）日期相比温度更高的所有日期的 Id。
+
+	+---------+------------------+------------------+
+	| Id(INT) | RecordDate(DATE) | Temperature(INT) |
+	+---------+------------------+------------------+
+	|       1 |       2015-01-01 |               10 |
+	|       2 |       2015-01-02 |               25 |
+	|       3 |       2015-01-03 |               20 |
+	|       4 |       2015-01-04 |               30 |
+	+---------+------------------+------------------+
+	例如，根据上述给定的 Weather 表格，返回如下 Id:
+	
+	+----+
+	| Id |
+	+----+
+	|  2 |
+	|  4 |
+	+----+
+
+### 思路
+
+#### 1
+
+这道题给了我们一个Weather表，让我们找出比前一天温度高的Id，由于Id的排列未必是按顺序的，所以我们要找前一天就得根据日期来找，我们可以使用MySQL的函数Datadiff来计算两个日期的差值，我们的限制条件是温度高且日期差1。
+
+#### 2
+
+下面这种解法我们使用了MySQL的TO_DAYS函数，用来将日期换算成天数，其余跟上面相同。
+
+
+#### 3
+
+我们也可以使用Subdate函数，来实现日期减1，参见代码如下。
+
+
+#### 4
+
+最后来一种完全不一样的解法，使用了两个变量pre_t和pre_d分别表示上一个温度和上一个日期，然后当前温度要大于上一温度，且日期差为1，满足上述两条件的话选出来为Id，否则为NULL，然后更新pre_t和pre_d为当前的值，最后选出的Id不为空即可。
+
+
+
+
+
+### sql
+
+```
+# Write your MySQL query statement below
+
+SELECT w1.Id FROM Weather w1, Weather w2
+WHERE w1.Temperature > w2.Temperature AND DATEDIFF(w1.RecordDate, w2.RecordDate) = 1; # 831ms
+
+SELECT w1.Id FROM Weather w1, Weather w2
+WHERE w1.Temperature > w2.Temperature AND TO_DAYS(w1.Date) = TO_DAYS(w2.Date) + 1;
+
+
+SELECT w1.Id FROM Weather w1, Weather w2
+WHERE w1.Temperature > w2.Temperature AND SUBDATE(w1.Date, 1) = w2.Date;
+
+
+SELECT Id FROM (
+SELECT CASE WHEN Temperature > @pre_t AND DATEDIFF(Date, @pre_d) = 1 THEN Id ELSE NULL END AS Id,
+@pre_t := Temperature, @pre_d := Date 
+FROM Weather, (SELECT @pre_t := NULL, @pre_d := NULL) AS init ORDER BY Date ASC
+) id WHERE Id IS NOT NULL;
+
+
+```
+
+
+
