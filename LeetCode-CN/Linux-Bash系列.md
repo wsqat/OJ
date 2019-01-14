@@ -50,24 +50,15 @@
 
 
 ### 代码
+
 ```
-# Read from the file file.txt and output the tenth line to stdout.
+# Read from the file file.txt and output all valid phone numbers to stdout.
 
-awk '{if(NR==10) print $0}' file.txt # 8ms
+awk '/^([0-9]{3}-|\([0-9]{3}\) )[0-9]{3}-[0-9]{4}$/' file.txt # 16ms
+sed -n -r '/^([0-9]{3}-|\([0-9]{3}\) )[0-9]{3}-[0-9]{4}$/p' file.txt # 16ms
+grep -P '^(\d{3}-|\(\d{3}\) )\d{3}-\d{4}$' file.txt  #20ms
 
-awk 'NR == 10' file.txt # 12ms
-
-sed -n 10p file.txt # 8ms
-
-tail -n +10 file.txt | head -n 1 # 8ms
-
-head -n 10 file.txt | tail -n +10 # 12ms
 ```
-
-
-
-
-
 
 
 
@@ -147,10 +138,18 @@ head -n -3 file.txt： 打印file文件除了最后三行的所有内容
 
 ### 代码
 ```
-# Read from the file file.txt and output all valid phone numbers to stdout.
+# Read from the file file.txt and output the tenth line to stdout.
 
-awk '/^([0-9]{3}-|\([0-9]{3}\) )[0-9]{3}-[0-9]{4}$/' file.txt # 16ms
-sed -n -r '/^([0-9]{3}-|\([0-9]{3}\) )[0-9]{3}-[0-9]{4}$/p' file.txt # 16ms
-grep -P '^(\d{3}-|\(\d{3}\) )\d{3}-\d{4}$' file.txt  #20ms
+awk '{if(NR==10) print $0}' file.txt # 8ms
 
+awk 'NR == 10' file.txt # 12ms
+
+sed -n 10p file.txt # 8ms
+
+tail -n +10 file.txt | head -n 1 # 8ms
+
+head -n 10 file.txt | tail -n +10 # 12ms
 ```
+
+
+
