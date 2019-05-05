@@ -31,27 +31,27 @@
 ```
 class Solution {
 public:
-    
+
     //方法一 递归
     vector<vector<int>> permute(vector<int>& nums) {
          vector<vector<int>> res;
          permutationrecusive(res, 0, nums);
          return res;
     }
-    
+
     void permutationrecusive(vector<vector<int>> & res, int k, vector<int> & nums){
         if(k==nums.size()){
             res.push_back(nums);
         }
-        
+
         for(int i=k; i< nums.size(); i++){
             swap(nums[i], nums[k]);
             permutationrecusive(res, k+1, nums);
             swap(nums[k], nums[i]);
         }
-        
+
     }
-    
+
     //方法二 dfs
     vector<vector<int>> permute(vector<int>& nums) {
         vector<vector<int>> res;
@@ -60,12 +60,12 @@ public:
         dfs(res, temp, nums, isVisited);
         return res;
     }
-    
+
     void dfs(vector<vector<int>> & res, vector<int> &temp, vector<int> &nums, vector<bool> &isVisited){
         if(temp.size() == nums.size()){
             res.push_back(temp);
         }
-        
+
         for(int i=0; i<nums.size(); i++){
             if(isVisited[i]) continue;
             temp.push_back(nums[i]);
@@ -75,9 +75,22 @@ public:
             isVisited[i]=false;
         }
     }
-    
+
+
+    //方法三 stl  20ms  用了STL的内置函数 next_permutation()，专门就是用来返回下一个全排列, 自带去重复功能
+    vector<vector<int>> permute(vector<int>& nums) {
+      vector<vector<int>> res;
+      sort(nums.begin(), nums.end());
+      res.push_back(nums);
+      while( next_permutation(nums.begin(), nums.end() ) ){
+          res.push_back(nums);
+      }
+      return res;
+    }
+
 };
 ```
+
 
 
 
@@ -111,13 +124,13 @@ public:
         dfs(res, temp, nums, isVisited);
         return res;
     }
-    
+
     void dfs(vector<vector<int>> & res, vector<int> &temp, vector<int> &nums, vector<bool> &isVisited){
         if(temp.size() == nums.size()){
             res.push_back(temp);
             return;
         }
-        
+
         for(int i=0; i<nums.size(); i++){
             if(isVisited[i]) continue;
             if(i>0 && nums[i]==nums[i-1] && !isVisited[i-1]) continue;
@@ -130,5 +143,3 @@ public:
     }
 };
 ```
-
-
